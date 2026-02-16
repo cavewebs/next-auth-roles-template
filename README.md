@@ -113,6 +113,17 @@ pnpm run remove-content --docs
 - [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) – Optimize custom fonts and remove external network requests for improved performance
 - [`ImageResponse`](https://nextjs.org/docs/app/api-reference/functions/image-response) – Generate dynamic Open Graph images at the edge
 
+### Search
+
+The template includes a built-in command search powered by [cmdk](https://cmdk.paco.me/):
+
+- **Trigger**: Press `Cmd+K` (Mac) or `Ctrl+K` (Windows/Linux) to open the search dialog
+- **Dashboard search**: Searches through dashboard sidebar navigation items, filtered by the current user's role. Located in the dashboard header via `components/dashboard/search-command.tsx`
+- **Docs search**: Searches through documentation sidebar navigation items. Located in `components/docs/search.tsx`
+- **Behavior**: Selecting a result navigates to the corresponding page using Next.js router
+
+The search component accepts `SidebarNavItem[]` as input and groups results by section. Role-based filtering is applied at the layout level before passing items to the search component.
+
 ### Hooks and Utilities
 
 - `useIntersectionObserver` – React hook to observe when an element enters or leaves the viewport
