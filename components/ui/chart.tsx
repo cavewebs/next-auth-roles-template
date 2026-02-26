@@ -2,6 +2,15 @@
 
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
+import type {
+  Payload,
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent"
+import type {
+  LegendPayload,
+  VerticalAlignmentType,
+} from "recharts/types/component/DefaultLegendContent"
 
 import { cn } from "@/lib/utils"
 
@@ -102,14 +111,29 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
-      hideLabel?: boolean
-      hideIndicator?: boolean
-      indicator?: "line" | "dot" | "dashed"
-      nameKey?: string
-      labelKey?: string
-    }
+  React.ComponentProps<"div"> & {
+    active?: boolean
+    payload?: ReadonlyArray<Payload<ValueType, NameType>>
+    label?: React.ReactNode
+    labelFormatter?: (
+      label: React.ReactNode,
+      payload: ReadonlyArray<Payload<ValueType, NameType>>
+    ) => React.ReactNode
+    formatter?: (
+      value: ValueType | undefined,
+      name: NameType | undefined,
+      item: Payload<ValueType, NameType>,
+      index: number,
+      payload: ReadonlyArray<Payload<ValueType, NameType>>
+    ) => React.ReactNode
+    color?: string
+    hideLabel?: boolean
+    hideIndicator?: boolean
+    indicator?: "line" | "dot" | "dashed"
+    nameKey?: string
+    labelKey?: string
+    labelClassName?: string
+  }
 >(
   (
     {
@@ -190,7 +214,7 @@ const ChartTooltipContent = React.forwardRef<
 
             return (
               <div
-                key={item.dataKey}
+                key={`${item.dataKey ?? item.name ?? index}`}
                 className={cn(
                   "flex w-full items-stretch gap-2 [&>svg]:size-2.5 [&>svg]:text-muted-foreground",
                   indicator === "dot" && "items-center"
@@ -258,11 +282,12 @@ const ChartLegend = RechartsPrimitive.Legend
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
-      hideIcon?: boolean
-      nameKey?: string
-    }
+  React.ComponentProps<"div"> & {
+    payload?: ReadonlyArray<LegendPayload>
+    verticalAlign?: VerticalAlignmentType
+    hideIcon?: boolean
+    nameKey?: string
+  }
 >(
   (
     { className, hideIcon = false, payload, verticalAlign = "bottom", nameKey },

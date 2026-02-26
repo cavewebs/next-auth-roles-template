@@ -1,10 +1,13 @@
 import authConfig from "@/auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "@/generated/prisma/client";
 import NextAuth, { type DefaultSession } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/db";
-import { getUserById } from "@/lib/user";
+import { getUserById, getUserByEmailForAuth } from "@/lib/user";
+import { loginSchema } from "@/lib/validations/auth";
 
 // More info: https://authjs.dev/getting-started/typescript#module-augmentation
 declare module "next-auth" {
@@ -18,6 +21,8 @@ declare module "next-auth" {
 export const {
   handlers,
   auth,
+  signIn,
+  signOut,
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -62,6 +67,24 @@ export const {
       return token;
     },
   },
-  ...authConfig,
+  providers: [
+    ...authConfig.providers,
+    Credentials({
+      async authorize(credentials) {
+        const validated = loginSchema.safeParse(credentials);
+        if (!validated.success) return null;
+
+        const { email, password } = validated.data;
+        const user = await getUserByEmailForAuth(email);
+
+        if (!user || !user.password) return null;
+
+        const passwordsMatch = await bcrypt.compare(password, user.password);
+        if (!passwordsMatch) return null;
+
+        return user;
+      },
+    }),
+  ],
   // debug: process.env.NODE_ENV !== "production"
 });
