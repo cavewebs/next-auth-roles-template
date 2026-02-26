@@ -95,14 +95,19 @@ const deleteFolderRecursive = async (folderPath) => {
       console.log("Deleting blog-related content only\n");
 
       // contentlayer.config.ts
-      await manageLinesInFile('update', contentlayerPath, 109, null, "documentTypes: [Page, Doc],");
-      await manageLinesInFile('remove', contentlayerPath, 43, 90);
+      // Line 117: documentTypes: [Page, Doc, Post], → remove Post
+      await manageLinesInFile('update', contentlayerPath, 117, null, "  documentTypes: [Page, Doc],");
+      // Lines 51-97: export const Post = defineDocumentType(...)
+      await manageLinesInFile('remove', contentlayerPath, 51, 97);
 
       // docs.ts
-      await manageLinesInFile('remove', path.join(configDir, "docs.ts"), 31, 34);
+      // Lines 34-38: Blog sidebar entry in Configuration section
+      await manageLinesInFile('remove', path.join(configDir, "docs.ts"), 34, 38);
+      // Lines 5-8: Blog entry in mainNav
       await manageLinesInFile('remove', path.join(configDir, "docs.ts"), 5, 8);
 
       // marketing.ts
+      // Lines 5-8: Blog entry in mainNav
       await manageLinesInFile('remove', path.join(configDir, "marketing.ts"), 5, 8);
 
       // remove folders & files
@@ -124,36 +129,54 @@ const deleteFolderRecursive = async (folderPath) => {
       console.log("Deleting docs-related content only\n");
 
       // contentlayer.config.ts
-      await manageLinesInFile('update', contentlayerPath, 109, null, "documentTypes: [Page, Post],");
-      await manageLinesInFile('remove', contentlayerPath, 23, 42);
+      // Line 117: documentTypes: [Page, Doc, Post], → remove Doc
+      await manageLinesInFile('update', contentlayerPath, 117, null, "  documentTypes: [Page, Post],");
+      // Lines 31-49: export const Doc = defineDocumentType(...)
+      await manageLinesInFile('remove', contentlayerPath, 31, 49);
 
       // hero-landing.tsx
-      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 37, null, 'href="/login"');
-      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 44, null, "<span>Go to Login Page</span>");
+      // Line 37: href="/docs" → href="/login"
+      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 37, null, '            href="/login"');
+      // Line 44: <span>Installation Guide</span> → <span>Go to Login Page</span>
+      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 44, null, "            <span>Go to Login Page</span>");
 
-      // mobile-nav.tsx
+      // mobile-nav.tsx (operations go bottom-to-top to preserve line numbers)
+      // Lines 124-129: DocsSidebarNav conditional block
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 124, 129);
-      await manageLinesInFile('update', path.join(componentsDir, "layout", "mobile-nav.tsx"), 21, 29, "const links = marketingConfig.mainNav;");
+      // Lines 21-29: selectedLayout, documentation, configMap, links block → simplified
+      await manageLinesInFile('update', path.join(componentsDir, "layout", "mobile-nav.tsx"), 21, 29, "  const links = marketingConfig.mainNav;");
+      // Line 13: DocsSidebarNav import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 13, null);
+      // Line 9: docsConfig import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 9, null);
+      // Line 5: useSelectedLayoutSegment import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 5, null);
 
-      // navbar.tsx
-      await manageLinesInFile('update', path.join(componentsDir, "layout", "navbar.tsx"), 29, null, "const links = marketingConfig.mainNav;");
+      // navbar.tsx (operations go bottom-to-top to preserve line numbers)
+      // Lines 81-102: docs-specific header block (DocsSearch, GitHub link)
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 81, 102);
+      // Line 48: large={documentation} prop
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 48, null);
-      await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 31, 38);
+      // Lines 30-38: selectedLayout, documentation, configMap, links block → simplified
+      await manageLinesInFile('update', path.join(componentsDir, "layout", "navbar.tsx"), 30, 38, "  const links = marketingConfig.mainNav;");
+      // Line 15: DocsSearch import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 15, null);
+      // Line 8: docsConfig import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 8, null);
+      // Line 5: useSelectedLayoutSegment import
+      await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 5, null);
 
       // dashboard.ts
+      // Line 38: { href: "/docs", icon: "bookOpen", title: "Documentation" },
       await manageLinesInFile('remove', path.join(configDir, "dashboard.ts"), 38, null);
 
       // marketing.ts
+      // Lines 9-12: Documentation entry in mainNav
       await manageLinesInFile('remove', path.join(configDir, "marketing.ts"), 9, 12);
 
-      // types/index.d.ts
-      await manageLinesInFile('remove', path.join(typesDir, "index.d.ts"), 34, 44);
+      // types/index.d.ts - only remove DocsConfig type, keep SidebarNavItem
+      // Lines 40-44: empty line + DocsConfig type
+      await manageLinesInFile('remove', path.join(typesDir, "index.d.ts"), 40, 44);
 
       // remove folders & files
       await deleteFolderRecursive(path.join(appDir, "(docs)"));
@@ -169,33 +192,51 @@ const deleteFolderRecursive = async (folderPath) => {
       console.log("Deleting all content\n");
 
       // hero-landing.tsx
-      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 37, null, 'href="/login"');
-      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 44, null, "<span>Go to Login Page</span>");
+      // Line 37: href="/docs" → href="/login"
+      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 37, null, '            href="/login"');
+      // Line 44: <span>Installation Guide</span> → <span>Go to Login Page</span>
+      await manageLinesInFile('update', path.join(componentsDir, "sections", "hero-landing.tsx"), 44, null, "            <span>Go to Login Page</span>");
 
-      // mobile-nav.tsx
+      // mobile-nav.tsx (operations go bottom-to-top to preserve line numbers)
+      // Lines 124-129: DocsSidebarNav conditional block
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 124, 129);
-      await manageLinesInFile('update', path.join(componentsDir, "layout", "mobile-nav.tsx"), 21, 29, "const links = marketingConfig.mainNav;");
+      // Lines 21-29: selectedLayout, documentation, configMap, links block → simplified
+      await manageLinesInFile('update', path.join(componentsDir, "layout", "mobile-nav.tsx"), 21, 29, "  const links = marketingConfig.mainNav;");
+      // Line 13: DocsSidebarNav import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 13, null);
+      // Line 9: docsConfig import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 9, null);
+      // Line 5: useSelectedLayoutSegment import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "mobile-nav.tsx"), 5, null);
 
-      // navbar.tsx
-      await manageLinesInFile('update', path.join(componentsDir, "layout", "navbar.tsx"), 29, null, "const links = marketingConfig.mainNav;");
+      // navbar.tsx (operations go bottom-to-top to preserve line numbers)
+      // Lines 81-102: docs-specific header block (DocsSearch, GitHub link)
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 81, 102);
+      // Line 48: large={documentation} prop
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 48, null);
-      await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 31, 38);
+      // Lines 30-38: selectedLayout, documentation, configMap, links block → simplified
+      await manageLinesInFile('update', path.join(componentsDir, "layout", "navbar.tsx"), 30, 38, "  const links = marketingConfig.mainNav;");
+      // Line 15: DocsSearch import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 15, null);
+      // Line 8: docsConfig import
       await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 8, null);
+      // Line 5: useSelectedLayoutSegment import
+      await manageLinesInFile('remove', path.join(componentsDir, "layout", "navbar.tsx"), 5, null);
 
       // config files
+      // Line 38: Documentation link in dashboard sidebar
       await manageLinesInFile('remove', path.join(configDir, "dashboard.ts"), 38, null);
+      // Lines 5-12: Blog + Documentation entries in marketing mainNav
       await manageLinesInFile('remove', path.join(configDir, "marketing.ts"), 5, 12);
 
-      // types/index.d.ts
-      await manageLinesInFile('remove', path.join(typesDir, "index.d.ts"), 34, 44);
+      // types/index.d.ts - only remove DocsConfig type, keep SidebarNavItem
+      // Lines 40-44: empty line + DocsConfig type
+      await manageLinesInFile('remove', path.join(typesDir, "index.d.ts"), 40, 44);
 
       // next.config.js
-      await manageLinesInFile('update', nextConfigPath, 30, null, "module.exports = nextConfig;");
+      // Line 27: module.exports = withContentlayer(nextConfig); → module.exports = nextConfig;
+      await manageLinesInFile('update', nextConfigPath, 27, null, "module.exports = nextConfig;");
+      // Lines 1-2: contentlayer require + blank line
       await manageLinesInFile('remove', nextConfigPath, 1, 2);
 
       // remove folders & files
