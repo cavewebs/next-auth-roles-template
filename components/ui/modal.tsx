@@ -4,7 +4,8 @@ import { Dispatch, SetStateAction } from "react";
 // import { useRouter } from "next/router";
 import { Drawer } from "vaul";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -92,6 +93,9 @@ export function Modal({
           className,
         )}
       >
+        <VisuallyHidden>
+          <DialogTitle>Modal</DialogTitle>
+        </VisuallyHidden>
         {children}
       </DialogContent>
     </Dialog>

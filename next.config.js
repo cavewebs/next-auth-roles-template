@@ -22,6 +22,12 @@ const nextConfig = {
     ],
   },
   serverExternalPackages: ["@prisma/client"],
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      ".js": [".ts", ".tsx", ".js", ".jsx"],
+    };
+    return config;
+  },
 };
 
 module.exports = withContentlayer(nextConfig);
